@@ -21,7 +21,9 @@ use Cake\Database\Log\QueryLogger;
 use Cake\Datasource\ConnectionManager;
 use Cake\ElasticSearch\Datasource\Connection;
 use Cake\ElasticSearch\TestSuite\TestCase;
+use Cake\Http\ServerRequest;
 use Cake\Log\Log;
+use Laminas\Diactoros\Uri;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -83,7 +85,11 @@ class ConnectionTest extends TestCase
         $connection->enableQueryLogging();
         $connection->setLogger(Log::engine('elasticsearch'));
 
-        $result = $connection->request('_stats');
+        $request = new ServerRequest([
+            'method' => 'GET',
+            'uri' => new Uri('_stats')
+        ]);
+        $result = $connection->sendRequest($request);
         $connection->disableQueryLogging();
 
         $this->assertNotEmpty($result);
@@ -108,6 +114,7 @@ class ConnectionTest extends TestCase
     {
         Log::setConfig('elasticsearch', [
             'engine' => 'Array',
+            'levels' => ['debug'],
         ]);
         $logger = new QueryLogger();
 
@@ -128,7 +135,13 @@ class ConnectionTest extends TestCase
         $connection->setLogger($logger);
         $connection->enableQueryLogging();
 
-        $connection->request('_stats');
+        $request = new ServerRequest([
+            'method' => 'GET',
+            'uri' => new Uri('_stats'),
+            'data' => [],
+            'input' => '',
+        ]);
+        $result = $connection->sendRequest($request);
         $connection->disableQueryLogging();
 
         $logs = Log::engine('elasticsearch')->read();

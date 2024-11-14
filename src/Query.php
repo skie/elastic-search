@@ -18,6 +18,7 @@ namespace Cake\ElasticSearch;
 
 use Cake\Collection\Iterator\MapReduce;
 use Cake\Datasource\Exception\RecordNotFoundException;
+use Cake\Datasource\FactoryLocator;
 use Cake\Datasource\QueryCacher;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\RepositoryInterface;
@@ -1198,5 +1199,40 @@ class Query implements IteratorAggregate, QueryInterface
     protected function decoratorClass(): string
     {
         return ResultSetDecorator::class;
+    }
+
+    /**
+     * Serialize Query
+     *
+     * @return array
+     */
+    public function __serialize(): array
+    {
+        return [
+            'dirty' => $this->_dirty,
+            'queryParts' => $this->_queryParts,
+            'searchOptions' => $this->_searchOptions,
+            'options' => $this->_options,
+            'repository' => $this->_repository->getAlias(),
+        ];
+    }
+
+    /**
+     * Unserialize Query
+     *
+     * @param array $data Serialized data
+     * @return void
+     */
+    public function __unserialize(array $data): void
+    {
+        $this->_dirty = $data['dirty'];
+        $this->_queryParts = $data['queryParts'];
+        $this->_searchOptions = $data['searchOptions'];
+        $this->_options = $data['options'];
+
+        $this->_repository = FactoryLocator::get('ElasticSearch')->get($data['repository']);
+
+        $this->_elasticQuery = new ElasticaQuery();
+        $this->compileQuery();
     }
 }

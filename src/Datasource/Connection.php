@@ -79,7 +79,7 @@ class Connection implements ConnectionInterface
             $this->enableQueryLogging((bool)$config['log']);
         }
 
-        $this->_client = new ElasticaClient($config, $callback, $this->getEsLogger());
+        $this->_client = new ElasticaClient($config, $this->getEsLogger());
     }
 
     /**

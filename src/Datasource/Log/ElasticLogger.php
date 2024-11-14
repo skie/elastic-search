@@ -118,6 +118,9 @@ class ElasticLogger extends AbstractLogger
     protected function _log(string $level, string $message, array $context = []): void
     {
         $logData = $context;
+        if ($level === LogLevel::INFO || $message !== 'Elastica Request') {
+            return;
+        }
         if ($level === LogLevel::DEBUG && isset($context['request'])) {
             $logData = [
                 'method' => $context['request']['method'],
@@ -146,6 +149,8 @@ class ElasticLogger extends AbstractLogger
         if ($exception instanceof Exception) {
             throw $exception;
         }
+        // stackTrace();
+        // debug([$level]);
         $this->getLogger()->log($level, $logData, $context);
     }
 }

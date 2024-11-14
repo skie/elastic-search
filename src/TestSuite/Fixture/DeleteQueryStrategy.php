@@ -75,7 +75,10 @@ class DeleteQueryStrategy implements FixtureStrategyInterface
             foreach ($fixtures as $fixture) {
                 /** @var \Cake\ElasticSearch\Datasource\Connection $connection */
                 $esIndex = $connection->getIndex($fixture->getIndex()->getName());
-                $esIndex->deleteByQuery(new MatchAll());
+                $esIndex->deleteByQuery(new MatchAll(), [
+                    'conflicts' => 'proceed',
+                    'refresh' => true
+                ]);
                 $esIndex->refresh();
             }
         }, $this->fixtures);
