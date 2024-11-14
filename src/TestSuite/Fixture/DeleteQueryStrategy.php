@@ -77,7 +77,7 @@ class DeleteQueryStrategy implements FixtureStrategyInterface
                 $esIndex = $connection->getIndex($fixture->getIndex()->getName());
                 $esIndex->deleteByQuery(new MatchAll(), [
                     'conflicts' => 'proceed',
-                    'refresh' => true
+                    'refresh' => true,
                 ]);
                 $esIndex->refresh();
             }
