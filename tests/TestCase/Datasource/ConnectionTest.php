@@ -87,7 +87,7 @@ class ConnectionTest extends TestCase
 
         $request = new ServerRequest([
             'method' => 'GET',
-            'uri' => new Uri('_stats')
+            'uri' => new Uri('_stats'),
         ]);
         $result = $connection->sendRequest($request);
         $connection->disableQueryLogging();
@@ -141,7 +141,7 @@ class ConnectionTest extends TestCase
             'data' => [],
             'input' => '',
         ]);
-        $result = $connection->sendRequest($request);
+        $connection->sendRequest($request);
         $connection->disableQueryLogging();
 
         $logs = Log::engine('elasticsearch')->read();
