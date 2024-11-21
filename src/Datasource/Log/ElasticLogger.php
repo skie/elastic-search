@@ -149,8 +149,6 @@ class ElasticLogger extends AbstractLogger
         if ($exception instanceof Exception) {
             throw $exception;
         }
-        // stackTrace();
-        // debug([$level]);
         $this->getLogger()->log($level, $logData, $context);
     }
 }
